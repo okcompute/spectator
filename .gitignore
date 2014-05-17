@@ -1,0 +1,12 @@
+# git-ls-files --others --exclude-from=.git/info/exclude
+
+# Temporary files.
+*~
+*.pyc
+
+# Virtual environment.
+site/
+
+# Build products.
+spectator.egg-info/
+build/
