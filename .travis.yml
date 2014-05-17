@@ -8,4 +8,4 @@ before_script:
   - "python setup.py develop"
   - "sphinx-build -q -n -W -b html ./docs ./build/docs"
 script:
-  - "nosetests -a \"!platform\" -a \"platform=windows\" --with-coverage --cover-package=spectator"
+  - "nosetests -a \"!platform\" -a \"platform=linux\" --with-coverage --cover-package=spectator"
