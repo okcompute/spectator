@@ -1,10 +1,16 @@
+"""A process monitoring tool."""
+
 import heapq
 import itertools
 import logging
 import time
 
 
-def generate_intervals(clock, now=None):
+def generate_intervals(clock):
+    """Generate a sequence of time intervals.
+
+    Each time ``next()`` is called, the generator yields the time interval
+    since the last value was requested."""
     old = clock()
     while True:
         new = clock()
@@ -18,6 +24,13 @@ def local_stopwatch():
 
 
 def generate_deadlines(start, period, skip=0):
+    """Generate a sequence of points in time at periodic intervals.
+
+    Each time ``next()`` is called, the generator yields the next deadline.
+    Note that the current time has no effect, so the generator yields values at
+    exactly ``period`` offsets of one another.  This helps with regularity:
+    when a specific occurrence of a periodic timer is late, this does not
+    offset all subsequent deadlines (the timer will "catch up" so to speak)."""
     while True:
         if skip > 0:
             skip -= 1
@@ -76,6 +89,7 @@ class AllSeeingEye(object):
         return deadline - self.clock()
 
     def watching(self, label):
+        """Check if the all seeing eye is watching ``label``."""
         return label in self.monitors
 
     def watch(self, label, monitor, period, notify):
@@ -85,13 +99,14 @@ class AllSeeingEye(object):
         deadlines = generate_deadlines(self.clock(), period, skip=1)
 
         def action():
+            """Invoke the notification function and auto-reregister."""
             try:
                 # Auto-cancel when desired.
                 if notify(monitor()):
                     self.scheduler.schedule(next(deadlines), action)
                 else:
                     del self.monitors[label]
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 logging.exception('Polling "%s".', label)
         self.scheduler.schedule(next(deadlines), action)
         self.monitors[label] = monitor
