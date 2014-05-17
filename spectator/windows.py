@@ -1,10 +1,12 @@
+import os
 from itertools import izip
 
-import win32api
-import win32con
-import win32event
-import win32file
-import win32process
+if os.name == 'nt':
+    import win32api
+    import win32con
+    import win32event
+    import win32file
+    import win32process
 
 from . import (
     generate_intervals,
