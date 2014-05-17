@@ -1,13 +1,13 @@
 from datetime import date, datetime, timedelta
 from functools import wraps
 from itertools import count, repeat
+from mock import patch
 from nose.tools import (
     eq_,
     ok_,
     assert_greater_equal,
     assert_less,
 )
-from time import sleep
 
 from spectator import (
     AllSeeingEye,
@@ -77,18 +77,12 @@ def test_deadline_generator_offset():
 
 def test_local_stopwatch():
     """Local stopwatch measures wall-clock time."""
-    interval = local_stopwatch()
-
-    next(interval)  # TODO: first interval always empty!
-
-    # NOTE: sleep is highly inaccurate.  It often returns higher times than
-    #       what was requested and sometimes returns a little less (seemingly)
-    #       due to precision issues in conversion of floating-point second
-    #       units to integer units of system-defined resolution.
-    sleep(0.1)
-    assert_less(abs(0.1-next(interval)), 0.005)
-    sleep(0.1)
-    assert_less(abs(0.1-next(interval)), 0.005)
+    with patch('time.clock') as clock:
+        interval = local_stopwatch()
+        clock.side_effect = [0.0, 0.0, 0.1, 0.2]
+        next(interval)  # TODO: first interval always empty!
+        assert_less(abs(0.1-next(interval)), 0.005)
+        assert_less(abs(0.1-next(interval)), 0.005)
 
 
 def test_scheduler_out_of_order_scheduling():

@@ -1,10 +1,12 @@
+import os
 from itertools import izip
 
-import win32api
-import win32con
-import win32event
-import win32file
-import win32process
+if os.name == 'nt':
+    import win32api
+    import win32con
+    import win32event
+    import win32file
+    import win32process
 
 from . import (
     generate_intervals,
@@ -27,7 +29,9 @@ def get_memory_usage(process):
 
 
 class ProcessMonitor(object):
-    def __init__(self, pid=win32process.GetCurrentProcessId()):
+    def __init__(self, pid=None):
+        if pid is None:
+            pid = win32process.GetCurrentProcessId()
         self.pid = pid
         self.process = win32api.OpenProcess(
             win32con.PROCESS_ALL_ACCESS, False, self.pid,
