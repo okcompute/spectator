@@ -1,0 +1,12 @@
+language: "python"
+python:
+  - "2.7"
+install:
+  - "pip install -r requirements.txt --use-mirrors"
+before_script:
+  - "flake8 spectator"
+  - "pylint spectator"
+  - "python setup.py develop"
+  - "sphinx-build -q -n -W -b html ./docs ./build/docs"
+script:
+  - "nosetests -a \"!platform\" -a \"platform=windows\" --with-coverage --cover-package=spectator"
