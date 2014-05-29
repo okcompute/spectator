@@ -1,6 +1,7 @@
 import os.path
 from setuptools import setup
 
+
 def readfile(name):
     path = os.path.join(os.path.dirname(__file__), name)
     with open(path, 'rb') as stream:

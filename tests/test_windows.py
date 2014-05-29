@@ -2,8 +2,6 @@ from mock import patch
 from nose.tools import assert_greater, eq_
 from nose.plugins.attrib import attr
 
-import time
-
 
 @attr(platform='windows')
 def test_process_monitor_real_calls():
@@ -21,7 +19,6 @@ def test_process_monitor_real_calls():
 @attr(platform='windows')
 def test_process_monitor_exit_code():
     """Process monitor fetches exit status once the process completes."""
-    import win32event
     import win32con
     from spectator.windows import ProcessMonitor
     """Process monitor methods should appear to work."""
@@ -38,7 +35,6 @@ def test_process_monitor_exit_code():
 @attr(platform='windows')
 def test_process_monitor_time_conversion():
     """Process monitor converts 100ns units to seconds."""
-    import win32process
     from spectator.windows import ProcessMonitor
     monitor = ProcessMonitor()
     with patch('win32process.GetProcessTimes') as GetProcessTimes:
@@ -48,7 +44,7 @@ def test_process_monitor_time_conversion():
         }
         eq_(monitor.elapsed_time(), 0.0)
         GetProcessTimes.return_value = {
-            'UserTime':   1 * 10000000,  # 1 second.
+            'UserTime': 1 * 10000000,  # 1 second.
             'KernelTime': 3 * 10000000,  # 3 seconds.
         }
         eq_(monitor.elapsed_time(), 4.0)
@@ -57,17 +53,16 @@ def test_process_monitor_time_conversion():
 @attr(platform='windows')
 def test_process_monitor_memory_conversion():
     """Process monitor converts bytes to gigabytes."""
-    import win32process
     from spectator.windows import ProcessMonitor
     monitor = ProcessMonitor()
     with patch('win32process.GetProcessMemoryInfo') as GetProcessMemoryInfo:
         GetProcessMemoryInfo.return_value = {
-            'PagefileUsage':  0,
+            'PagefileUsage': 0,
             'WorkingSetSize': 0,
         }
         eq_(monitor.memory_usage(), (0.0, 0.0))
         GetProcessMemoryInfo.return_value = {
-            'PagefileUsage':  0x40000000,  # 1 GB.
+            'PagefileUsage': 0x40000000,  # 1 GB.
             'WorkingSetSize': 0x80000000,  # 2 GB.
         }
         eq_(monitor.memory_usage(), (1.0, 2.0))
@@ -75,7 +70,6 @@ def test_process_monitor_memory_conversion():
 
 @attr(platform='windows')
 def test_remote_stopwatch():
-    import win32process
     from spectator.windows import ProcessMonitor
     monitor = ProcessMonitor()
     # On an 8-processor system, 4 seconds of elapsed time
@@ -87,10 +81,10 @@ def test_remote_stopwatch():
         cpu_usage = monitor.cpu_usage()
         with patch('win32process.GetProcessTimes') as GetProcessTimes:
             GetProcessTimes.side_effect = [{
-                'UserTime':   0,
+                'UserTime': 0,
                 'KernelTime': 0,
             }, {
-                'UserTime':   1 * 10000000,  # 1 second.
+                'UserTime': 1 * 10000000,  # 1 second.
                 'KernelTime': 3 * 10000000,  # 3 seconds.
             }]
             with patch('time.clock') as clock:
