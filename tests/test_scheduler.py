@@ -1,10 +1,9 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from functools import wraps
 from itertools import count, repeat
 from mock import patch
 from nose.tools import (
     eq_,
-    ok_,
     assert_greater_equal,
     assert_less,
 )
@@ -59,9 +58,9 @@ def test_deadline_generator():
     today = datetime.today()
     deadline = generate_deadlines(today, timedelta(days=1))
     eq_(next(deadline), today)
-    eq_(next(deadline), today+timedelta(days=1))
-    eq_(next(deadline), today+timedelta(days=2))
-    eq_(next(deadline), today+timedelta(days=3))
+    eq_(next(deadline), today + timedelta(days=1))
+    eq_(next(deadline), today + timedelta(days=2))
+    eq_(next(deadline), today + timedelta(days=3))
 
 
 def test_deadline_generator_offset():
@@ -69,10 +68,10 @@ def test_deadline_generator_offset():
     # Use date facilities as clock.
     today = datetime.today()
     deadline = generate_deadlines(today, timedelta(days=1), skip=2)
-    eq_(next(deadline), today+timedelta(days=2))
-    eq_(next(deadline), today+timedelta(days=3))
-    eq_(next(deadline), today+timedelta(days=4))
-    eq_(next(deadline), today+timedelta(days=5))
+    eq_(next(deadline), today + timedelta(days=2))
+    eq_(next(deadline), today + timedelta(days=3))
+    eq_(next(deadline), today + timedelta(days=4))
+    eq_(next(deadline), today + timedelta(days=5))
 
 
 def test_local_stopwatch():
@@ -81,8 +80,8 @@ def test_local_stopwatch():
         interval = local_stopwatch()
         clock.side_effect = [0.0, 0.0, 0.1, 0.2]
         next(interval)  # TODO: first interval always empty!
-        assert_less(abs(0.1-next(interval)), 0.005)
-        assert_less(abs(0.1-next(interval)), 0.005)
+        assert_less(abs(0.1 - next(interval)), 0.005)
+        assert_less(abs(0.1 - next(interval)), 0.005)
 
 
 def test_scheduler_out_of_order_scheduling():
@@ -93,7 +92,7 @@ def test_scheduler_out_of_order_scheduling():
     scheduler.schedule(3, 'meh')
     scheduler.schedule(2, 'bar')
     eq_(list(scheduler.elapsed(4)),
-        ['foo', 'bar', 'meh', 'qux',])
+        ['foo', 'bar', 'meh', 'qux', ])
 
 
 def test_scheduler_insertion_order():
@@ -104,7 +103,7 @@ def test_scheduler_insertion_order():
     scheduler.schedule(1, 'meh')
     scheduler.schedule(1, 'qux')
     eq_(list(scheduler.elapsed(1)),
-        ['foo', 'bar', 'meh', 'qux',])
+        ['foo', 'bar', 'meh', 'qux', ])
 
 
 def test_scheduler_next_deadline():
@@ -116,13 +115,13 @@ def test_scheduler_next_deadline():
     scheduler.schedule(3, 'meh')
     scheduler.schedule(2, 'bar')
     eq_(scheduler.next_deadline(), 1)
-    eq_(list(scheduler.elapsed(1)), ['foo',])
+    eq_(list(scheduler.elapsed(1)), ['foo', ])
     eq_(scheduler.next_deadline(), 2)
-    eq_(list(scheduler.elapsed(2)), ['bar',])
+    eq_(list(scheduler.elapsed(2)), ['bar', ])
     eq_(scheduler.next_deadline(), 3)
-    eq_(list(scheduler.elapsed(3)), ['meh',])
+    eq_(list(scheduler.elapsed(3)), ['meh', ])
     eq_(scheduler.next_deadline(), 4)
-    eq_(list(scheduler.elapsed(4)), ['qux',])
+    eq_(list(scheduler.elapsed(4)), ['qux', ])
     eq_(scheduler.next_deadline(), None)
 
 
@@ -142,6 +141,7 @@ def test_all_seeing_eye_countdown():
     def foo():
         pass
     foo.cancelled = False
+
     @count_calls
     def notify_foo(value):
         return not foo.cancelled  # automatically re-schedule.
@@ -149,6 +149,7 @@ def test_all_seeing_eye_countdown():
     def bar():
         pass
     bar.cancelled = False
+
     @count_calls
     def notify_bar(value):
         return not bar.cancelled  # automatically re-schedule.
@@ -185,6 +186,7 @@ def test_all_seeing_eye_fair_queueing():
     @count_calls
     def foo():
         return 0
+
     @count_calls
     def bar():
         return 1

@@ -10,3 +10,4 @@ site/
 # Build products.
 spectator.egg-info/
 build/
+environment/
