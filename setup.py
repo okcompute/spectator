@@ -1,5 +1,5 @@
 import os.path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def readfile(name):
@@ -15,9 +15,7 @@ setup(
     description="Process monitoring tool",
     long_description=readfile('README.rst'),
     license="BSD",
-    packages=[
-        'spectator',
-    ],
+    packages=find_packages(),
     classifiers=[
         'License :: OSI Approved :: BSD License',
     ],

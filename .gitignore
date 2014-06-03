@@ -3,11 +3,12 @@
 # Temporary files.
 *~
 *.pyc
+.coverage
 
 # Virtual environment.
 site/
+environment/
 
 # Build products.
 spectator.egg-info/
 build/
-environment/
