@@ -14,7 +14,7 @@ def get_memory_usage(process):
     """Get total RAM used by a process, in MBs.
 
     :return: a tuple of 2 value is returned to show physical memory assigned to
-    the process, as well as virtual memory reserved by the process."""
+        the process, as well as virtual memory reserved by the process."""
     info = process.get_memory_info()
     unit = 1024.0 * 1024.0
     return (float(info[0]) / unit,

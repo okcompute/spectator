@@ -1,6 +1,6 @@
 ======================================================
-  API documentation for ``spectator.windows`` module
+  API documentation for ``spectator.osx`` module
 ======================================================
 
-.. automodule:: spectator.windows
+.. automodule:: spectator.osx
     :members:

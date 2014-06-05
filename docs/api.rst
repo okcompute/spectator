@@ -29,3 +29,4 @@ Contents:
    :maxdepth: 2
 
    api/windows.rst
+   api/osx.rst
