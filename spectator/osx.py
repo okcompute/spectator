@@ -35,6 +35,7 @@ class ProcessMonitor(object):
         """Obtain the process' exit code, or None if still running."""
         # TODO: cannot fetch exit code on OSX. Must wait for process to
         # terminate to catch exit code
+        self = self
         return None
 
     def elapsed_time(self):
