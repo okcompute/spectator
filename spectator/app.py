@@ -79,12 +79,11 @@ class MainHandler(tornado.web.RequestHandler):
 def main():
     """ Start Spectator application server through command line. """
     tornado.options.parse_command_line()
-    main_ioloop = ZMQIOLoop()
-    main_ioloop.make_current()
+    io_loop = ZMQIOLoop.instance()
     app = Application(options.agents_port)
     app.listen(options.port)
     print "Spectator server is started..."
-    main_ioloop.start()
+    io_loop.start()
 
 
 if __name__ == "__main__":
