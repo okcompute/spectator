@@ -4,12 +4,12 @@
 """ Prototype for specator network topology. """
 
 import os.path
+import json
 
 import tornado.web
 import tornado.websocket
 from tornado.options import define, options
 import zmq
-import json
 from zmq.eventloop.ioloop import ZMQIOLoop
 from zmq.eventloop.zmqstream import ZMQStream
 
@@ -66,8 +66,9 @@ class Application(tornado.web.Application):
         :param messages List of json encoded messages
         """
         for msg in messages:
+            # Unpack new message
             msg = json.loads(msg)
-            UpdateSocketHandler.publish_message(msg['message'])
+            UpdateSocketHandler.publish_message(msg)
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -78,13 +79,13 @@ class MainHandler(tornado.web.RequestHandler):
 
 def main():
     """ Start Spectator application server through command line. """
-    tornado.options.parse_command_line()
     io_loop = ZMQIOLoop.instance()
     app = Application(options.agents_port)
     app.listen(options.port)
-    print "Spectator server is started..."
+    print "Starting Spectator server..."
     io_loop.start()
 
 
 if __name__ == "__main__":
+    tornado.options.parse_command_line()
     main()

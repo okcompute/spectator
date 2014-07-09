@@ -40,7 +40,6 @@ class Agent(object):
 
         """
         memory_usage = self.monitor.memory_usage()
-
         cpu_usage = self.monitor.cpu_usage()
         message = {'memory': memory_usage,
                    'cpu': cpu_usage,
@@ -51,7 +50,7 @@ class Agent(object):
 def main():
     ioloop = IOLoop.instance()
     Agent("tcp://127.0.0.1:5555")
-    print "Specator agent is started..."
+    print "Starting Specator agent..."
     ioloop.start()
 
 

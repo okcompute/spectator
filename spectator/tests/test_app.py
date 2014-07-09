@@ -64,12 +64,11 @@ class SpectatorApplicationTest(AsyncHTTPTestCase):
         socket.connect("tcp://127.0.0.1:%d" % self.agents_port)
 
         # Create a json test message and send it via zmq socket
-        json_msg = json.dumps({'message': 'test'})
-        socket.send(json_msg)
+        socket.send_json({"test": 123})
 
         # Validate message is received by websocket client
         session.read_message(self.stop)
         message = self.wait().result()
         message = json.loads(message)
-        self.assertEqual(message['body'], 'test')
-        self.assertIn('test', message['html'])
+        self.assertEqual(message['body'], {"test": 123})
+        self.assertIn("id", message)

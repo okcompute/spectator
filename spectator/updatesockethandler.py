@@ -21,10 +21,6 @@ class UpdateSocketHandler(tornado.websocket.WebSocketHandler):
     cache = []
     cache_size = 200
 
-    def allow_draft76(self):
-        # for iOS 5.0 Safari
-        return True
-
     def open(self):
         UpdateSocketHandler.waiters.add(self)
 
@@ -48,15 +44,15 @@ class UpdateSocketHandler(tornado.websocket.WebSocketHandler):
 
     @staticmethod
     def make_message(message):
-        """ Render a deliverable message.
+        """ Wrap message in a delivery dictonary.
 
-        :message: String with the message to send.
+        :message: A string or a dict representation of the message to send.
         :returns: A dictionnary with two keys('id' and 'body').
 
         """
         message = {
             "id": str(uuid.uuid4()),
-            "body": unicode(message)
+            "body": message
         }
         return message
 
@@ -64,18 +60,17 @@ class UpdateSocketHandler(tornado.websocket.WebSocketHandler):
     def publish_message(cls, message):
         """ Publish a message via WebSocket to all connected client.
 
-        :message: A string instance.
+        :message: A string or a dict representation of the message to send.
         """
-        # Add to cache so new clients get the full history
+        # Wrap message
         message = cls.make_message(message)
+        # Add to cache so new clients get the full history
         cls.update_cache(message)
 
         # Push the message to all waiters
         for waiter in cls.waiters:
             try:
-                # Inject html section in message for client
-                message["html"] = tornado.escape.to_basestring(
-                    waiter.render_string("message.html", message=message))
+                # note: `write_message` encodes message to json
                 waiter.write_message(message)
             except:
                 logging.error("Error sending message", exc_info=True)

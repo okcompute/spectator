@@ -4,11 +4,13 @@
 *~
 *.pyc
 .coverage
+tags
 
 # Virtual environment.
 site/
 environment/
 
-# Build products.
+# Build and test products
 spectator.egg-info/
 build/
+test.sh
