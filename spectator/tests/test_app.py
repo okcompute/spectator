@@ -70,5 +70,5 @@ class SpectatorApplicationTest(AsyncHTTPTestCase):
         session.read_message(self.stop)
         message = self.wait().result()
         message = json.loads(message)
-        self.assertEqual(message['body'], {"test": 123})
+        self.assertEqual(message['body'], json.dumps({"test": 123}))
         self.assertIn("id", message)

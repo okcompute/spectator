@@ -4,6 +4,7 @@
 
 import logging
 import uuid
+import json
 
 import tornado.escape
 import tornado.ioloop
@@ -52,7 +53,7 @@ class UpdateSocketHandler(tornado.websocket.WebSocketHandler):
         """
         message = {
             "id": str(uuid.uuid4()),
-            "body": message
+            "body": json.dumps(message),
         }
         return message
 
@@ -70,6 +71,8 @@ class UpdateSocketHandler(tornado.websocket.WebSocketHandler):
         # Push the message to all waiters
         for waiter in cls.waiters:
             try:
+                message["html"] = tornado.escape.to_basestring(
+                    waiter.render_string("message.html", message=message))
                 # note: `write_message` encodes message to json
                 waiter.write_message(message)
             except:

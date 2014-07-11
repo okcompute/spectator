@@ -6,6 +6,7 @@ from mock import (
     MagicMock,
     call,
 )
+import json
 
 from spectator.app import (
     UpdateSocketHandler,
@@ -29,14 +30,14 @@ class TestUpdateSocketHandler(unittest.TestCase):
         message = UpdateSocketHandler.make_message("my message")
         self.assertEqual(type(message['id']), str)
         self.assertEqual(len(message['id']), 32 + 4)  # note: normal length of a uuid
-        self.assertEqual(message['body'], "my message")
+        self.assertEqual(message['body'], json.dumps("my message"))
 
     def test_publish_message_cache_message(self):
         """ Test `pusblish_message` cache the messages received. """
         self.assertEqual(len(UpdateSocketHandler.cache), 0)
         UpdateSocketHandler.publish_message("my message")
         self.assertEqual(len(UpdateSocketHandler.cache), 1)
-        self.assertEqual(UpdateSocketHandler.cache[0]['body'], "my message")
+        self.assertEqual(UpdateSocketHandler.cache[0]['body'], json.dumps("my message"))
 
     def test_publish_message(self):
         """ Test `pusblish_message` write message to a waiter in waiters list.
@@ -51,4 +52,4 @@ class TestUpdateSocketHandler(unittest.TestCase):
 
         self.assertIn(call.write_message, waiter.mock_calls)
         self.assertEqual(len(UpdateSocketHandler.cache), 1)
-        self.assertEqual(UpdateSocketHandler.cache[0]['body'], "my message")
+        self.assertEqual(UpdateSocketHandler.cache[0]['body'], json.dumps("my message"))
