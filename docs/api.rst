@@ -28,5 +28,4 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   api/windows.rst
-   api/osx.rst
+   api/monitor.rst

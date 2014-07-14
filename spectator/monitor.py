@@ -1,4 +1,4 @@
-"""OSX-specific process monitoring support."""
+""" Monitoring support."""
 
 import os
 from itertools import izip
@@ -20,13 +20,6 @@ class ProcessMonitor(object):
             pid = os.getpid()
         self.pid = pid
         self.process = psutil.Process(self.pid)
-
-    def exit_code(self):
-        """Obtain the process' exit code, or None if still running."""
-        # TODO: cannot fetch exit code on OSX. Must wait for process to
-        # terminate to catch exit code
-        self = self
-        return None
 
     def elapsed_time(self):
         """Obtain the total elapsed time used by the process.

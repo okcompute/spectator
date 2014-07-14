@@ -1,6 +1,0 @@
-======================================================
-  API documentation for ``spectator.windows`` module
-======================================================
-
-.. automodule:: spectator.windows
-    :members:

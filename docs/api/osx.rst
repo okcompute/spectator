@@ -1,6 +1,6 @@
 ======================================================
-  API documentation for ``spectator.osx`` module
+  API documentation for ``spectator.monitor`` module
 ======================================================
 
-.. automodule:: spectator.osx
+.. automodule:: spectator.monitor
     :members:
