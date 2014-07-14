@@ -1,24 +1,14 @@
 """OSX-specific process monitoring support."""
 
 import os
+from itertools import izip
+
 import psutil
 
-
-def get_elapsed_time(process):
-    """Get total processor time consumed by process, in seconds."""
-    times = process.cpu_times()
-    return times[0] + times[1]
-
-
-def get_memory_usage(process):
-    """Get total RAM used by a process, in MBs.
-
-    :return: a tuple of 2 value is returned to show physical memory assigned to
-        the process, as well as virtual memory reserved by the process."""
-    info = process.get_memory_info()
-    unit = 1024.0 * 1024.0
-    return (float(info[0]) / unit,
-            float(info[1]) / unit)
+from . import (
+    generate_intervals,
+    local_stopwatch,
+)
 
 
 class ProcessMonitor(object):
@@ -41,17 +31,23 @@ class ProcessMonitor(object):
     def elapsed_time(self):
         """Obtain the total elapsed time used by the process.
 
+        return: the total elapsed time in seconds since startup.
+
         See also:
 
         - :term:`Elapsed time`.
         """
-        return get_elapsed_time(self.process)
+        times = self.process.cpu_times()
+        return times[0] + times[1]
 
     def memory_usage(self):
         """Obtain the physical and virtual memory assigned to the process.
 
         The units are in GBs."""
-        return get_memory_usage(self.process)
+        info = self.process.get_memory_info()
+        unit = 1024.0 * 1024.0
+        return (float(info[0]) / unit,
+                float(info[1]) / unit)
 
     def cpu_usage(self):
         """Generate CPU usage in percent of total computing power.
@@ -60,4 +56,9 @@ class ProcessMonitor(object):
         system.
 
         You should poll this function at a minimum of 0.1 seconds interval."""
-        return self.process.cpu_percent()
+        cores = psutil.cpu_count()
+        elapsed_time = izip(local_stopwatch(),
+                            generate_intervals(self.elapsed_time))
+        while True:
+            local, remote = next(elapsed_time)
+            yield remote / cores / local

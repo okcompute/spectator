@@ -50,3 +50,22 @@ def test_process_monitor_memory_conversion():
         eq_(monitor.memory_usage(), (0.0, 0.0))
         memory_info.return_value = (1 * 1024 * 1024, 2 * 1024 * 1024)
         eq_(monitor.memory_usage(), (1.0, 2.0))
+
+
+@attr(platform='osx')
+def test_remote_stopwatch():
+    from spectator.osx import ProcessMonitor
+    monitor = ProcessMonitor()
+    # On an 8-processor system, 4 seconds of elapsed time
+    # in 1 wall-clock second means 50% of CPU usage.
+    with patch('psutil.cpu_count') as mock_cpu_count:
+        mock_cpu_count.return_value = 8
+        cpu_usage = monitor.cpu_usage()
+        with patch('psutil.Process.cpu_times') as mock_cpu_times:
+            mock_cpu_times.side_effect = [
+                (0.0, 0.0),
+                (1.0, 3.0),
+            ]
+            with patch('time.clock') as mock_clock:
+                mock_clock.side_effect = [0.0, 1.0]
+                eq_(next(cpu_usage), 0.5)
